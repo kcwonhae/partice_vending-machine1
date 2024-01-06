@@ -1,0 +1,48 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Servo.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+Servo servo;
+
+const int tactSwitchPin = 2;
+const int pullUpValue = HIGH; 
+const int servopin = 9; 
+
+void setup() {
+  lcd.begin();
+  pinMode(tactSwitchPin, INPUT_PULLUP);
+  
+  Serial.begin(9600); 
+  lcd.print("Press the button");
+  servo.attach(servopin); 
+  servo.write(0);          
+  delay(1000);
+  servo.detach();
+}
+
+void loop() {
+  int switchState = digitalRead(tactSwitchPin);
+  
+  if (switchState == LOW) {
+    lcd.clear(); 
+    lcd.setCursor(0, 0);
+    lcd.print("Place your card");
+
+    servo.attach(servopin);  
+    delay(1);  
+    servo.write(90); 
+    delay(3000);  
+    Serial.println(servo.read()); 
+    servo.write(0); 
+    delay(1000);  
+    Serial.println(servo.read());  // my servo-motor is broken... so I'm using serial monitor
+    servo.detach(); 
+
+    delay(1000);
+  } else {
+    lcd.clear();
+    lcd.setCursor(0, 0); 
+    lcd.print("Press the button");
+  }
+}
